@@ -1,10 +1,11 @@
 const algorithmia = require('algorithmia')
 const apyKey = require('../credentials.json').apiKey
+const sentenceBoundaryDetection = require('sbd')
 
 async function robot(content) {
     await getContentFromWikpedia(content)
     sanitizeContent(content)
-    //breakContentIntoSentences(content)
+    breakContentIntoSentences(content)
 
     async function getContentFromWikpedia() {
         const algorithmiaAuthenticated = algorithmia(apyKey)
@@ -30,6 +31,18 @@ async function robot(content) {
 
             return withoutMarkDown.join(' ')
         }
+    }
+
+    function breakContentIntoSentences(content) {
+        content.sentences = []
+        const sentences = sentenceBoundaryDetection.sentences(content.sourceContentSanitized)
+        sentences.forEach((sentence) => {
+            content.sentences.push({
+                text: sentence,
+                keyWords: [],
+                images: []
+            })
+        })
     }
 }
 
