@@ -1,12 +1,14 @@
 const algorithmia = require('algorithmia')
 const sentenceBoundaryDetection = require('sbd')
 
+const state = require('../state/index.js')
+
 const apiKeyAlgorithmia = require('../Credentials/algorithmia.json').apiKey
 
 const apiKeyWatson = require('../Credentials/watson.json').apikey
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 
-var nlu = new NaturalLanguageUnderstandingV1({
+const nlu = new NaturalLanguageUnderstandingV1({
     /*username: 'gabrieldiasfaria@gmail.com',
     password: 'Anima1532',*/
     iam_apikey: apiKeyWatson,
@@ -14,12 +16,16 @@ var nlu = new NaturalLanguageUnderstandingV1({
     url: 'https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/41f42235-6f19-42b9-a408-d669ee7cb952'
 });
 
-async function robot(content) {
+async function robot() {
+    const content = state.load()
+
     await getContentFromWikpedia(content)
     sanitizeContent(content)
     breakContentIntoSentences(content)
     limitMaximumSentences(content)
     await getKeywordsOfAllSentences(content)
+
+    state.save(content)
 
     async function getContentFromWikpedia() {
         const algorithmiaAuthenticated = algorithmia(apiKeyAlgorithmia)
