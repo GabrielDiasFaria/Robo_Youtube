@@ -10,9 +10,7 @@ async function start() {
     //await robots.text()
     robots.image()
 
-    //const content = robots.state.load()
-    //console.dir(content, { depth: false })
-    //console.log(JSON.stringify(content, null, 4))
+    //console.dir(content, { depth: null })
 }
 
 start()
