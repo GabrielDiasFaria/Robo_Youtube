@@ -8,9 +8,9 @@ async function robot() {
     const content = state.load()
 
     //await fetchImagesOfAllSentences(content)
-    //state.save(content)
-
     await downloadAllImages(content)
+
+    //state.save(content)
 
     async function downloadAllImages(content) {
         content.downloadedImages = []
