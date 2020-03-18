@@ -1,0 +1,5 @@
+convert 0-original.png -resize 50% 0-converted.png
+-> Vai redimensionar a imagem
+
+convert 0-original.png -blur 0x9 0-converted.png
+-> Vai deixar borrada a imagem

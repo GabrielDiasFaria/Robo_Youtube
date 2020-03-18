@@ -3,12 +3,18 @@ const google = require('googleapis').google
 const customSearch = google.customsearch('v1')
 const googleSearch = require('../Credentials/google.json')
 const downloader = require('image-downloader')
+const gm = require('gm').subClass({ imageMagick: true });
+
+const path = require('path')
+const rootPath = path.resolve(__dirname, '..')
+const fromRoot = relPath => path.resolve(rootPath, relPath)
 
 async function robot() {
     const content = state.load()
 
     //await fetchImagesOfAllSentences(content)
-    await downloadAllImages(content)
+    //await downloadAllImages(content)
+    await convertAllImages(content)
 
     //state.save(content)
 
@@ -40,6 +46,44 @@ async function robot() {
         return downloader.image({
             url, url,
             dest: `./images/${fileName}`
+        })
+    }
+
+    async function convertAllImages(content) {
+        for (let sentenceIndex = 0; sentenceIndex < content.sentences.length; sentenceIndex++) {
+            await convertImage(sentenceIndex)
+        }
+    }
+
+    async function convertImage(sentenceIndex) {
+        return new Promise((resolve, reject) => {
+            const inputFile = fromRoot(`./images/${sentenceIndex}-original.png[0]`)
+            const outputFile = fromRoot(`./images/${sentenceIndex}-converted.png`)
+            const width = 1920
+            const height = 1080
+
+            console.log(inputFile)
+
+            gm(inputFile).flip().write(outputFile, function (err) {
+                if (err)
+                    return reject(err)
+                console.log(`> [video-robot] Image converted: ${outputFile}`)
+                resolve()
+            })
+
+            // gm(inputFile)
+            //     .background("#FF0000")
+            //     .blur(0, 9)
+            //     .resize(width, height)
+            //     .write(outputFile, (error) => {
+            //         if (error) {
+            //             return reject(error)
+            //         }
+
+            //         console.log(`> [video-robot] Image converted: ${outputFile}`)
+            //         resolve()
+            //     })
+
         })
     }
 
